@@ -1,20 +1,11 @@
-# Use the official Node.js image as the base image
-FROM node:16
+# Use OpenJDK base image
+FROM openjdk:17-jdk-slim
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+# Set working directory
+WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Copy the jar file
+COPY target/*.jar app.jar
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code to the working directory
-COPY . .
-
-# Expose the port your app runs on
-EXPOSE 3000
-
-# Define the command to run your app
-CMD ["npm", "start"]
+# Run the app
+ENTRYPOINT ["java", "-jar", "app.jar"]
