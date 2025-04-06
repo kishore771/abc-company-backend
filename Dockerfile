@@ -1,12 +1,10 @@
-# Use Maven to build the jar
+# Step 1: Build WAR using Maven
 FROM maven:3.8.5-openjdk-17-slim AS build
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Use a smaller JRE image to run the app
-FROM eclipse-temurin:17-jre
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+# Step 2: Run WAR using a servlet container like Tomcat
+FROM tomcat:9.0-jdk17
+COPY --from=build /app/target/abc-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/app.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
