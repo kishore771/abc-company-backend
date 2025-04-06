@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Step 2: Run WAR using a servlet container like Tomcat
+# Step 2: Run WAR using Tomcat
 FROM tomcat:9.0-jdk17
-COPY --from=build /app/target/abc-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/app.war
+COPY --from=build /app/target/abc-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 EXPOSE 8080
