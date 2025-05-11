@@ -1,4 +1,5 @@
 package com.abc.abc.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,27 +12,25 @@ public class HeadingService {
     @Autowired
     private HeadingRepository headingRepository;
 
-   public String getAllHeadings() {
-        StringBuilder headings = new StringBuilder();
-        for (Heading heading : headingRepository.findAll()) {
-            headings.append(heading.getHeading()).append("\n");
-        }
-        return headings.toString();
+    // Get the single (latest) heading
+    public String getAllHeadings() {
+        Heading heading = headingRepository.findAll().stream().findFirst().orElse(null);
+        return (heading != null) ? heading.getHeading() : "No heading found";
     }
 
-    public String getHeadingById(int headingId) {
-        Heading heading = headingRepository.findById(headingId).orElse(null);
-        if (heading != null) {
-            return heading.getHeading();
+    // Add or update the heading (only one record maintained)
+    public String addHeading(String headingText) {
+        Heading existingHeading = headingRepository.findAll().stream().findFirst().orElse(null);
+
+        if (existingHeading != null) {
+            existingHeading.setHeading(headingText);
+            headingRepository.save(existingHeading);
+            return "Heading updated successfully";
         } else {
-            return "Heading not found";
+            Heading newHeading = new Heading();
+            newHeading.setHeading(headingText);
+            headingRepository.save(newHeading);
+            return "Heading added successfully";
         }
-    }
-
-    public String addHeading(String heading) {
-        Heading newHeading = new Heading(0, heading); // Assuming ID is auto-generated
-        headingRepository.save(newHeading);
-        return "Heading added successfully";
     }
 }
-// Compare this snippet from src/main/java/com/abc/abc/AbcApplication.java:
